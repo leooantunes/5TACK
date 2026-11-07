@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+web-build/
+.expo/
+apps/mobile/ios/
+apps/mobile/android/
+*.log
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision

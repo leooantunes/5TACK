@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { loadEnv } from './config/env';
 import { createServices } from './container';
 import { buildServer } from './http/server';

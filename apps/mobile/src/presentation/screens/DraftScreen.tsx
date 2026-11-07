@@ -25,7 +25,10 @@ export function DraftScreen({ id }: { id: string }) {
   const teams = useMemo(() => [...new Set(s.players.map((p) => p.teamShortName))].sort(), [s.players]);
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return s.players.filter((p) => (!team || p.teamShortName === team) && (!q || p.nickname.toLowerCase().includes(q)));
+    return s.players.filter((p) =>
+      (!team || p.teamShortName === team) &&
+      (!q || p.nickname.toLowerCase().includes(q))
+    );
   }, [s.players, team, query]);
 
   if (s.loading || (!s.tournament && !s.loadError)) return <Screen><Loading label="Abrindo mercado…" /></Screen>;
@@ -62,14 +65,17 @@ export function DraftScreen({ id }: { id: string }) {
 
       <BudgetBar budget={tournament.budget} spent={spent} />
 
+      <CompositionSummary picks={s.picks} />
+
       <View style={{ flexDirection: 'row', gap: 6 }}>
-        {[0, 1, 2, 3, 4].map((i) => {
-          const item = picked[i];
+        {['STAR', 'ENTRY', 'SNIPER', 'CLUTCHER', 'SUPPORT'].map((slotRole) => {
+          const item = picked.find((p) => p?.pick.role === slotRole);
           return (
             <SquadSlot
-              key={item?.player.id ?? `empty-${i}`}
+              key={slotRole}
               player={item?.player}
-              role={item?.pick.role}
+              role={item?.pick.role as any}
+              slotRole={slotRole as any}
               disabled={locked}
               onRemove={item ? () => onToggle(item.player) : undefined}
               onCycleRole={item ? () => s.cycleRole(item.player.id) : undefined}
@@ -133,7 +139,7 @@ export function DraftScreen({ id }: { id: string }) {
           bottom: 0,
           padding: space.lg,
           paddingBottom: space.lg + insets.bottom,
-          backgroundColor: colors.bg + 'F2',
+          backgroundColor: colors.bg,
           borderTopWidth: 1,
           borderTopColor: colors.border,
           flexDirection: 'row',
@@ -156,5 +162,37 @@ export function DraftScreen({ id }: { id: string }) {
         />
       </View>
     </Screen>
+  );
+}
+
+function CompositionSummary({ picks }: { picks: Array<{ playerId: string; role: any }> }) {
+  const roles = picks.map((p) => p.role);
+  const picked = new Set(roles);
+  const allRoles = ['STAR', 'ENTRY', 'SNIPER', 'CLUTCHER', 'SUPPORT'] as const;
+
+  return (
+    <View style={{ flexDirection: 'row', gap: space.xs, flexWrap: 'wrap' }}>
+      {allRoles.map((role) => (
+        <View
+          key={role}
+          style={{
+            backgroundColor: picked.has(role) ? colors.accent + '3F' : colors.bgElevated,
+            borderWidth: 1,
+            borderColor: picked.has(role) ? colors.accent : colors.border,
+            borderRadius: radius.sm,
+            paddingHorizontal: space.sm,
+            paddingVertical: 4,
+          }}
+        >
+          <Txt
+            variant="mono"
+            color={picked.has(role) ? colors.accent : colors.textMute}
+            style={{ fontSize: 11 }}
+          >
+            {roleLabel[role].short}
+          </Txt>
+        </View>
+      ))}
+    </View>
   );
 }

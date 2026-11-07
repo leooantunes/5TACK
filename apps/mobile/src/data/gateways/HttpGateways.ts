@@ -64,7 +64,7 @@ export class HttpAuthGateway implements AuthGateway {
 export class HttpTournamentGateway implements TournamentGateway {
   constructor(private readonly http: HttpClient) {}
   list() {
-    return this.http.request('/tournaments', { schema: z.array(TournamentSchema) });
+    return this.http.request('/tournaments/upcoming', { schema: z.array(TournamentSchema) });
   }
   get(id: string) {
     return this.http.request(`/tournaments/${seg(id)}`, { schema: TournamentSchema });

@@ -200,8 +200,25 @@ export class PandaScoreProvider implements DataProvider {
   }
 
   async recentAverages(playerIds: string[]): Promise<Record<string, number>> {
-    // Simplificação: sem histórico suficiente, todos começam com a mesma média.
-    // Em produção: média de pontos dos últimos N mapas, gravada pelo job de sync.
-    return Object.fromEntries(playerIds.map((id) => [id, 25]));
+    // Plano free não tem acesso a /games (403) nem tem quota para múltiplas requisições (429)
+    // Estratégia: gerar score pseudo-aleatório mas determinístico baseado no ID
+    // Cada jogador sempre tem o mesmo "score relativo", evitando cache invalidation
+
+    console.log(`[Pricing] Gerando preços dinâmicos para ${playerIds.length} jogadores (free tier - sem stats)`);
+
+    const averages: Record<string, number> = {};
+    for (const playerId of playerIds) {
+      // Hash determinístico: ID do jogador determina sua performance
+      // Conversão: "12345" → 0.2 a 0.8 (20 a 30 pontos)
+      const hash = playerId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+      const normalized = (hash % 100) / 100; // 0 a 1
+      const score = 20 + normalized * 20; // 20 a 40 pontos
+      averages[playerId] = score;
+    }
+
+    const scores = Object.values(averages);
+    console.log(`[Pricing] Min: ${Math.min(...scores).toFixed(1)}, Max: ${Math.max(...scores).toFixed(1)}, Média: ${(scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1)}`);
+
+    return averages;
   }
 }

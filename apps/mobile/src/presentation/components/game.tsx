@@ -83,22 +83,26 @@ export function BudgetBar({ budget, spent }: { budget: number; spent: number }) 
 export function SquadSlot({
   player,
   role,
+  slotRole,
   onRemove,
   onCycleRole,
   disabled,
 }: {
   player?: Player;
   role?: FantasyRole;
+  slotRole: FantasyRole;
   onRemove?: () => void;
   onCycleRole?: () => void;
   disabled?: boolean;
 }) {
   if (!player || !role) {
     return (
-      <View style={[styles.slot, styles.slotEmpty]} accessibilityLabel="Vaga livre">
-        <MaterialCommunityIcons name="plus" size={18} color={colors.textMute} />
-        <Txt variant="label" color={colors.textMute} style={{ fontSize: 10 }}>
-          Livre
+      <View style={[styles.slot, styles.slotEmpty]} accessibilityLabel={`Vaga para ${roleLabel[slotRole].name}`}>
+        <Txt variant="label" color={colors.accent} style={{ fontSize: 9, fontWeight: '600' }}>
+          {roleLabel[slotRole].short}
+        </Txt>
+        <Txt variant="label" color={colors.textMute} style={{ fontSize: 8 }}>
+          {roleLabel[slotRole].name}
         </Txt>
       </View>
     );
@@ -140,37 +144,85 @@ export function PlayerRow({
   blocked: boolean;
   onPress: () => void;
 }) {
+  const countryEmoji = player.country ? getCountryEmoji(player.country) : '🌍';
+
   return (
     <Pressable
       onPress={onPress}
+      disabled={blocked}
       accessibilityRole="button"
       accessibilityLabel={`${player.nickname}, ${player.teamShortName}, ${money(player.price)}${picked ? ', escalado' : ''}`}
       style={({ pressed }) => [
         styles.playerRow,
         picked && { borderColor: colors.accent, backgroundColor: colors.accentDim },
-        pressed && { opacity: 0.85 },
+        blocked && { opacity: 0.5, borderColor: colors.textMute },
+        pressed && !blocked && { opacity: 0.85 },
       ]}
     >
-      <View style={styles.avatar}>
-        <Txt variant="title" color={picked ? colors.accent : colors.textDim} style={{ fontSize: 16, transform: [{ rotate: '-45deg' }] }}>
-          {player.nickname.slice(0, 1).toUpperCase()}
+      <View style={[styles.avatar, { backgroundColor: colors.bgElevated, overflow: 'hidden', justifyContent: 'center', alignItems: 'center' }]}>
+        <Txt variant="heading" style={{ fontSize: 20 }}>
+          {countryEmoji}
         </Txt>
       </View>
       <View style={{ flex: 1, gap: 2 }}>
-        <Txt variant="heading">{player.nickname}</Txt>
+        <View style={{ flexDirection: 'row', gap: space.sm, alignItems: 'center' }}>
+          <Txt variant="heading">{player.nickname}</Txt>
+        </View>
         <View style={{ flexDirection: 'row', gap: space.sm, alignItems: 'center' }}>
           <TeamTag name={player.teamShortName} />
           {player.country ? <Txt variant="caption">{player.country}</Txt> : null}
         </View>
       </View>
-      <Txt variant="mono" color={blocked && !picked ? colors.textMute : colors.text} style={{ fontFamily: fonts.monoBold, fontSize: 15 }}>
+      <Txt
+        variant="mono"
+        color={blocked && !picked ? colors.textMute : colors.text}
+        style={{ fontFamily: fonts.monoBold, fontSize: 15 }}
+      >
         {money(player.price)}
       </Txt>
       <View style={[styles.addBtn, picked ? { backgroundColor: colors.accent, borderColor: colors.accent } : blocked ? { opacity: 0.35 } : null]}>
-        <MaterialCommunityIcons name={picked ? 'check' : 'plus'} size={18} color={picked ? colors.accentText : colors.accent} />
+        <MaterialCommunityIcons
+          name={picked ? 'check' : 'plus'}
+          size={18}
+          color={picked ? colors.accentText : colors.accent}
+        />
       </View>
     </Pressable>
   );
+}
+
+function getCountryEmoji(countryCode: string): string {
+  const flags: Record<string, string> = {
+    BR: '🇧🇷',
+    US: '🇺🇸',
+    FR: '🇫🇷',
+    DE: '🇩🇪',
+    SE: '🇸🇪',
+    PL: '🇵🇱',
+    DK: '🇩🇰',
+    NO: '🇳🇴',
+    TR: '🇹🇷',
+    KZ: '🇰🇿',
+    RU: '🇷🇺',
+    UA: '🇺🇦',
+    RO: '🇷🇴',
+    CZ: '🇨🇿',
+    HU: '🇭🇺',
+    GR: '🇬🇷',
+    IT: '🇮🇹',
+    ES: '🇪🇸',
+    PT: '🇵🇹',
+    GB: '🇬🇧',
+    AT: '🇦🇹',
+    CH: '🇨🇭',
+    BE: '🇧🇪',
+    NL: '🇳🇱',
+    CA: '🇨🇦',
+    AU: '🇦🇺',
+    FI: '🇫🇮',
+    XK: '🏳️',
+  };
+  return flags[countryCode] || '🌍';
 }
 
 /* ---------------- Torneio ---------------- */

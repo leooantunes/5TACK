@@ -134,11 +134,11 @@ function MyTeam({ data, locked }: { data: TournamentOverview; locked: boolean })
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
                 <View style={{ flex: 1, gap: 4 }}>
                   <View style={{ flexDirection: 'row', gap: space.sm, alignItems: 'center' }}>
+                    <RoleBadge role={pick.role} />
                     <Txt variant="heading">{p?.nickname ?? pick.playerId}</Txt>
-                    {p ? <TeamTag name={p.teamShortName} /> : null}
+                    {p ? <TeamTag name={p.teamShortName} /> : <Txt variant="caption" color={colors.danger}>jogador removido</Txt>}
                   </View>
                   <View style={{ flexDirection: 'row', gap: space.sm, alignItems: 'center' }}>
-                    <RoleBadge role={pick.role} compact />
                     {p ? <Txt variant="mono" color={colors.textMute}>{money(p.price)}</Txt> : null}
                   </View>
                 </View>

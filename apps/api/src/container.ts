@@ -7,7 +7,7 @@ import { LineupService } from './application/LineupService';
 import type { Env } from './config/env';
 import type { DataProvider } from './infra/providers/DataProvider';
 import { MockDataProvider } from './infra/providers/MockDataProvider';
-import { PandaScoreProvider } from './infra/providers/PandaScoreProvider';
+import { CitoProvider } from './infra/providers/CitoProvider';
 import {
   InMemoryLineupRepository,
   InMemoryRefreshTokenRepository,
@@ -17,8 +17,26 @@ import type { Services } from './http/server';
 
 /** Composição das dependências (injeção manual). Único lugar que conhece as implementações concretas. */
 export function createServices(env: Env, sign: (p: { sub: string }) => string): Services {
-  const provider: DataProvider =
-    env.DATA_PROVIDER === 'pandascore' ? new PandaScoreProvider(env.PANDASCORE_TOKEN!) : new MockDataProvider();
+  let provider: DataProvider;
+
+  if (env.DATA_PROVIDER === 'cito') {
+    const cito = new CitoProvider(env.CITO_API_KEY ?? process.env.CITO_API_KEY!);
+    const mock = new MockDataProvider();
+    // Hybrid: Cito para torneios/times, Mock para players se Cito retornar vazio
+    provider = {
+      name: 'hybrid-cito-mock',
+      listTournaments: () => cito.listTournaments(),
+      listTeams: (id) => cito.listTeams(id),
+      async listPlayers(id) {
+        return cito.listPlayers(id);
+      },
+      listMatches: (id) => cito.listMatches(id),
+      listMapStats: (id) => cito.listMapStats(id),
+      recentAverages: (ids) => cito.recentAverages(ids),
+    };
+  } else {
+    provider = new MockDataProvider();
+  }
 
   const users = new InMemoryUserRepository();
   const refreshTokens = new InMemoryRefreshTokenRepository();

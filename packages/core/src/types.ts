@@ -81,7 +81,7 @@ export interface PlayerMapStats {
   seriesWon: boolean;
 }
 
-export const FANTASY_ROLES = ['ENTRY', 'SNIPER', 'CLUTCHER', 'SUPPORT', 'STAR'] as const;
+export const FANTASY_ROLES = ['STAR', 'ENTRY', 'SNIPER', 'CLUTCHER', 'SUPPORT'] as const;
 export type FantasyRole = (typeof FANTASY_ROLES)[number];
 
 export const BOOSTERS = ['ACE_HUNTER', 'HEADSHOT_MACHINE', 'FLASH_MASTER', 'IRON_WALL'] as const;

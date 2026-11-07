@@ -2,7 +2,7 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { useSession } from '../../application/stores/sessionStore';
-import { Banner, Button, Field, HudPanel, Logo, Screen, Txt } from '../components/primitives';
+import { Banner, Button, Field, Logo, Screen, Txt } from '../components/primitives';
 import { colors, space } from '../theme/tokens';
 
 function errorMessage(e: unknown) {
@@ -13,17 +13,24 @@ function AuthShell({ children, title }: { children: React.ReactNode; title: stri
   return (
     <Screen edges={['top', 'bottom']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: space.xl, gap: space.xl }} keyboardShouldPersistTaps="handled">
-          <View style={{ alignItems: 'flex-start', gap: space.sm }}>
-            <Logo size={56} />
-            <Txt variant="caption" style={{ maxWidth: 300 }}>
-              Escale 5 pros, use a função certa em cada um e suba no ranking a cada mapa jogado.
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: space.lg, paddingVertical: space.xxl, gap: space.lg }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={{ alignItems: 'center', gap: space.md, marginBottom: space.xl }}>
+            <Logo size={48} subtitle={false} />
+            <Txt variant="heading" style={{ textAlign: 'center', maxWidth: 280 }}>
+              {title}
+            </Txt>
+            <Txt variant="caption" style={{ textAlign: 'center', maxWidth: 280, marginTop: space.xs }}>
+              Escale 5 pros, use a função certa em cada um e suba no ranking
             </Txt>
           </View>
-          <HudPanel style={{ gap: space.lg }}>
-            <Txt variant="title">{title}</Txt>
+
+          <View style={{ gap: space.md }}>
             {children}
-          </HudPanel>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </Screen>
@@ -51,6 +58,7 @@ export function LoginScreen() {
 
   return (
     <AuthShell title="Entrar">
+      {error ? <Banner message={error} /> : null}
       <Field
         label="E-mail"
         value={email}
@@ -71,13 +79,14 @@ export function LoginScreen() {
         placeholder="••••••••"
         onSubmitEditing={submit}
       />
-      {error ? <Banner message={error} /> : null}
       <Button title="Entrar" onPress={submit} loading={loading} disabled={!email || !password} />
-      <Link href="/register" style={{ alignSelf: 'center' }}>
-        <Txt variant="caption">
-          Novo por aqui? <Txt variant="caption" color={colors.accent}>Criar conta</Txt>
-        </Txt>
-      </Link>
+      <View style={{ alignItems: 'center', marginTop: space.md }}>
+        <Link href="/register">
+          <Txt variant="caption">
+            Novo por aqui? <Txt variant="caption" color={colors.accent} style={{ fontWeight: '600' }}>Criar conta</Txt>
+          </Txt>
+        </Link>
+      </View>
     </AuthShell>
   );
 }
@@ -111,6 +120,7 @@ export function RegisterScreen() {
 
   return (
     <AuthShell title="Criar conta">
+      {error ? <Banner message={error} /> : null}
       <Field
         label="Nick no ranking"
         value={displayName}
@@ -129,31 +139,34 @@ export function RegisterScreen() {
         textContentType="emailAddress"
         placeholder="voce@email.com"
       />
-      <Field
-        label="Senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoComplete="new-password"
-        textContentType="newPassword"
-        placeholder="mín. 8 caracteres"
-        error={passwordHint}
-      />
-      <Txt variant="caption" color={colors.textMute}>
+      <View>
+        <Field
+          label="Senha"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          autoComplete="new-password"
+          textContentType="newPassword"
+          placeholder="mín. 8 caracteres"
+          error={passwordHint}
+        />
+      </View>
+      <Txt variant="caption" color={colors.textMute} style={{ textAlign: 'center', marginTop: space.xs }}>
         Seu e-mail é privado. No ranking aparece só o seu nick.
       </Txt>
-      {error ? <Banner message={error} /> : null}
       <Button
         title="Criar conta"
         onPress={submit}
         loading={loading}
         disabled={!email || !displayName || !!passwordHint || !password}
       />
-      <Link href="/login" style={{ alignSelf: 'center' }}>
-        <Txt variant="caption">
-          Já tem conta? <Txt variant="caption" color={colors.accent}>Entrar</Txt>
-        </Txt>
-      </Link>
+      <View style={{ alignItems: 'center', marginTop: space.md }}>
+        <Link href="/login">
+          <Txt variant="caption">
+            Já tem conta? <Txt variant="caption" color={colors.accent} style={{ fontWeight: '600' }}>Entrar</Txt>
+          </Txt>
+        </Link>
+      </View>
     </AuthShell>
   );
 }

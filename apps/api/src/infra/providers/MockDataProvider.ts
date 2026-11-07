@@ -1,4 +1,5 @@
-import type { Match, Player, PlayerMapStats, Team, Tournament } from '@5tack/core';
+import type { Match, Player, PlayerMapStats, Team, Tournament, FantasyRole } from '@5tack/core';
+import { FANTASY_ROLES } from '@5tack/core';
 import type { DataProvider } from './DataProvider';
 
 /**
@@ -76,6 +77,8 @@ export class MockDataProvider implements DataProvider {
         teamId: t.id,
         teamShortName: t.shortName,
         country: t.country,
+        role: FANTASY_ROLES[i % FANTASY_ROLES.length] as FantasyRole,
+        photoUrl: `https://ui-avatars.com/api/?name=${encodeURIComponent(nick)}&background=random&color=fff`,
       })),
     );
 

@@ -5,7 +5,7 @@ import type { Booster, DraftError, FantasyRole, MatchStatus, TournamentStatus } 
 export const roleLabel: Record<FantasyRole, { name: string; short: string; hint: string }> = {
   STAR: { name: 'Estrela', short: 'STAR', hint: '×1,25 nos pontos-base do mapa' },
   ENTRY: { name: 'Entry', short: 'ENTRY', hint: '+1,5 por first kill' },
-  SNIPER: { name: 'Sniper', short: 'AWP', hint: '+0,5 por kill de AWP' },
+  SNIPER: { name: 'Sniper', short: 'SNIP', hint: '+0,5 por kill de rifle' },
   CLUTCHER: { name: 'Clutcher', short: 'CLUTCH', hint: '+2 por clutch vencido' },
   SUPPORT: { name: 'Suporte', short: 'SUP', hint: '+1 por flash assist, +2 com KAST ≥ 75%' },
 };

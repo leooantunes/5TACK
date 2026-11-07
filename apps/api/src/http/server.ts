@@ -39,13 +39,16 @@ export async function buildServer(env: Env, makeServices: (sign: (p: { sub: stri
     trustProxy: env.NODE_ENV === 'production',
   });
 
-  await app.register(helmet);
   await app.register(cors, {
     // Só origens explícitas (allowlist). O app nativo não envia Origin, então não depende disto.
     origin: env.CORS_ORIGINS ? env.CORS_ORIGINS.split(',').map((s) => s.trim()) : false,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Authorization', 'Content-Type'],
     maxAge: 600,
+  });
+  await app.register(helmet, {
+    crossOriginResourcePolicy: false,
+    crossOriginOpenerPolicy: false,
   });
   await app.register(rateLimit, { global: true, max: 120, timeWindow: '1 minute' });
   await app.register(jwt, {
@@ -110,6 +113,10 @@ export async function buildServer(env: Env, makeServices: (sign: (p: { sub: stri
   });
 
   // ---------- Catálogo (público) ----------
+  app.get('/tournaments/upcoming', async () => {
+    const all = await services.catalog.listTournaments();
+    return all.filter((t) => t.status === 'upcoming');
+  });
   app.get('/tournaments', async () => services.catalog.listTournaments());
   app.get('/tournaments/:id', async (req) => services.catalog.getTournament(parse(IdParam, req.params).id));
   app.get('/tournaments/:id/players', async (req) => services.catalog.listPlayers(parse(IdParam, req.params).id));

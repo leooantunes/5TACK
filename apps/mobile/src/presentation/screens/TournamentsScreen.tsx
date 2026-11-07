@@ -13,8 +13,10 @@ export function TournamentsScreen() {
   if (loading && !data) return <Screen><Loading /></Screen>;
   if (error && !data) return <Screen><ErrorState message={error} onRetry={reload} /></Screen>;
 
-  const open = (data ?? []).filter((t) => t.status === 'upcoming');
-  const other = (data ?? []).filter((t) => t.status !== 'upcoming');
+  // Filtra apenas tier S
+  const tournaments = (data ?? []).filter((t) => t.tier === 'S');
+  const open = tournaments.filter((t) => t.status === 'upcoming');
+  const other = tournaments.filter((t) => t.status !== 'upcoming');
 
   return (
     <Screen>

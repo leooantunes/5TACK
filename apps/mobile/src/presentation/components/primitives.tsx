@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import type { ReactNode } from 'react';
 import {
   ActivityIndicator,
@@ -40,11 +39,6 @@ export function Txt({ variant = 'body', color, style, ...rest }: TextProps & { v
 export function Screen({ children, edges = ['top'], style }: { children: ReactNode; edges?: Edge[]; style?: StyleProp<ViewStyle> }) {
   return (
     <View style={styles.screen}>
-      <LinearGradient
-        colors={['rgba(242,160,61,0.10)', 'rgba(10,13,18,0)']}
-        style={styles.glow}
-        pointerEvents="none"
-      />
       <SafeAreaView edges={edges} style={[{ flex: 1 }, style]}>
         {children}
       </SafeAreaView>
@@ -235,7 +229,6 @@ export function Banner({ message, tone = 'danger' }: { message: string; tone?: '
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg },
-  glow: { position: 'absolute', top: 0, left: 0, right: 0, height: 260 },
   panel: {
     backgroundColor: colors.panel,
     borderWidth: 1,
@@ -245,16 +238,16 @@ const styles = StyleSheet.create({
   },
   corner: { position: 'absolute', width: 10, height: 10 },
   button: {
-    minHeight: 48,
+    minHeight: 52,
     paddingHorizontal: space.xl,
     borderWidth: 1,
-    borderRadius: radius.sm,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
   buttonText: { fontFamily: fonts.display, fontSize: 16, letterSpacing: 1.8, textTransform: 'uppercase' },
   input: {
-    minHeight: 48,
+    minHeight: 52,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.bgElevated,
@@ -262,7 +255,8 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     fontSize: 16,
     paddingHorizontal: space.md,
-    borderRadius: radius.sm,
+    paddingVertical: space.md,
+    borderRadius: 12,
   },
   chip: {
     paddingHorizontal: space.md,

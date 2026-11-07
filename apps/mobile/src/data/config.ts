@@ -4,7 +4,7 @@
  * Por isso NENHUM segredo (chave da PandaScore, JWT secret) pode existir aqui:
  * o app só conhece a URL do nosso próprio backend.
  */
-const raw = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3333';
+const raw = process.env.EXPO_PUBLIC_API_URL ?? 'http://192.168.18.6:3333';
 
 function resolveApiUrl(url: string): string {
   const clean = url.replace(/\/+$/, '');
